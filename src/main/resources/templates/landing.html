@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouPi — Offline UPI Mesh Payment System</title>
+    <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/5ac3fe7c6abd2f62067f266d89671492?family=HelveticaNowDisplay-Medium" />
+    <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/1aa3377e489837a26d019bba501e779d?family=HelveticaNowDisplayW01-Rg" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+    <style>
+        :root {
+            --font-heading: 'HelveticaNowDisplay-Medium', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-body: 'HelveticaNowDisplayW01-Rg', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-synthesis: none;
+            text-rendering: optimizeLegibility;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #000;
+            color: #000;
+            font-family: var(--font-body);
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .landing-main {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #000;
+        }
+
+        .video-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: 70% center;
+            pointer-events: none;
+        }
+
+        .video-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-color: rgba(255, 255, 255, 0.15);
+            pointer-events: none;
+        }
+
+        .landing-section {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            height: 100vh;
+            width: 100%;
+            align-items: flex-end;
+            overflow: hidden;
+            padding: 0 20px 48px;
+        }
+
+        @media (min-width: 768px) {
+            .landing-section {
+                align-items: center;
+                padding: 0 40px;
+            }
+        }
+
+        .aria-intro {
+            position: relative;
+            z-index: 10;
+            max-width: 580px;
+        }
+
+        .aria-intro p {
+            pointer-events: none;
+            user-select: none;
+            margin-bottom: 24px;
+            font-size: clamp(18px, 4vw, 26px);
+            line-height: 1.3;
+            color: #000;
+            filter: blur(4px);
+            font-weight: 500;
+        }
+
+        .start-btn {
+            position: absolute;
+            left: 55%;
+            top: 63%;
+            z-index: 10;
+            border-radius: 9999px;
+            border: 1px solid #ffffff;
+            background-color: #000000;
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: var(--font-heading);
+            color: #ffffff;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.95), 0 0 22px rgba(255, 255, 255, 0.65);
+            transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+            outline: none;
+        }
+
+        @media (min-width: 640px) {
+            .start-btn {
+                left: 59%;
+                top: 62%;
+                padding: 16px 40px;
+                font-size: 18px;
+            }
+        }
+
+        .start-btn:hover {
+            background-color: #ffffff;
+            color: #000000;
+            box-shadow: 0 0 14px rgba(255, 255, 255, 1), 0 0 32px rgba(255, 255, 255, 0.9);
+            transform: scale(1.04);
+        }
+
+        .start-btn:active {
+            transform: scale(0.98);
+        }
+
+        .bottom-card {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            z-index: 10;
+            width: 37%;
+            min-width: 320px;
+            max-width: 620px;
+            transform: translateY(36px);
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+            background: transparent;
+            padding: 20px 28px 32px;
+            color: #ffffff;
+            box-shadow: 0 0 12px rgba(220, 245, 255, 0.85), 0 8px 30px rgba(70, 170, 220, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-right: none;
+        }
+
+        .bottom-card h1 {
+            font-size: clamp(22px, 3vw, 38px);
+            font-weight: 700;
+            line-height: 1.15;
+            font-family: var(--font-heading);
+            letter-spacing: -0.02em;
+        }
+
+        .bottom-card p {
+            margin-top: 6px;
+            font-size: clamp(12px, 1.5vw, 18px);
+            font-weight: 300;
+            line-height: 1.35;
+            opacity: 0.95;
+        }
+
+        @media (max-width: 640px) {
+            .bottom-card {
+                width: 90%;
+                min-width: unset;
+                transform: translateY(16px);
+                padding: 16px 20px 24px;
+            }
+            .start-btn {
+                left: 50%;
+                transform: translateX(-50%);
+                top: 55%;
+            }
+            .start-btn:hover {
+                transform: translateX(-50%) scale(1.04);
+            }
+            .start-btn:active {
+                transform: translateX(-50%) scale(0.98);
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="landing-main">
+        <!-- Background interactive video -->
+        <video id="robot-video" class="video-bg" muted playsinline preload="auto" aria-hidden="true">
+            <source src="/videos/robot-aria.mp4" type="video/mp4">
+        </video>
+
+        <div class="video-overlay" aria-hidden="true"></div>
+
+        <section id="top" class="landing-section">
+            <div class="aria-intro">
+                <p>Hey there, meet A.R.I.A,<br />Mainframe's Adaptive Response Interface Agent</p>
+            </div>
+
+            <!-- Start button connecting directly to the real existing dashboard -->
+            <a href="/dashboard" id="start-btn" class="start-btn" role="button">Start</a>
+
+            <!-- Bottom right frosted glass card -->
+            <div class="bottom-card">
+                <h1>Pay Beyond the Internet</h1>
+                <p>Secure payments through nearby devices.</p>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        (function() {
+            const video = document.getElementById('robot-video');
+            let prevX = null;
+            let targetTime = 0;
+            let seeking = false;
+            let pendingDelta = 0;
+            let frameId = null;
+
+            if (video) {
+                video.addEventListener('loadedmetadata', function() {
+                    targetTime = video.duration / 2;
+                    try {
+                        video.currentTime = targetTime;
+                    } catch (e) {
+                        console.warn('Initial seek failed:', e);
+                    }
+                });
+
+                const seekNext = function() {
+                    seeking = false;
+                    if (video.duration && Math.abs(video.currentTime - targetTime) > 0.01) {
+                        seeking = true;
+                        video.currentTime = targetTime;
+                    }
+                };
+
+                const applyPointerDelta = function() {
+                    frameId = null;
+                    if (!video.duration) return;
+                    targetTime = Math.max(0, Math.min(video.duration, targetTime + (pendingDelta / window.innerWidth) * 0.8 * video.duration));
+                    pendingDelta = 0;
+                    if (!seeking) seekNext();
+                };
+
+                const handleMouseMove = function(event) {
+                    if (prevX === null) {
+                        prevX = event.clientX;
+                        return;
+                    }
+                    pendingDelta += event.clientX - prevX;
+                    prevX = event.clientX;
+                    if (frameId === null) {
+                        frameId = requestAnimationFrame(applyPointerDelta);
+                    }
+                };
+
+                video.addEventListener('seeked', seekNext);
+                window.addEventListener('mousemove', handleMouseMove, { passive: true });
+
+                // Touch support for mobile devices
+                let touchStartX = null;
+                window.addEventListener('touchmove', function(e) {
+                    if (e.touches.length > 0) {
+                        const touchX = e.touches[0].clientX;
+                        if (touchStartX === null) {
+                            touchStartX = touchX;
+                            return;
+                        }
+                        pendingDelta += touchX - touchStartX;
+                        touchStartX = touchX;
+                        if (frameId === null) {
+                            frameId = requestAnimationFrame(applyPointerDelta);
+                        }
+                    }
+                }, { passive: true });
+                window.addEventListener('touchend', function() {
+                    touchStartX = null;
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

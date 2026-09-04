@@ -2,242 +2,773 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>UPI Offline Mesh — Demo</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            margin: 0; padding: 24px; background: #0d1117; color: #e6edf3;
-        }
-        h1 { margin-top: 0; color: #f0f6fc; }
-        h2 { color: #58a6ff; border-bottom: 1px solid #30363d; padding-bottom: 4px; margin-top: 32px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        .grid { display: grid; gap: 16px; }
-        .grid-2 { grid-template-columns: 1fr 1fr; }
-        .grid-3 { grid-template-columns: repeat(3, 1fr); }
-        .card {
-            background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px;
-        }
-        .device {
-            border: 1px solid #30363d; border-radius: 6px; padding: 12px; margin-bottom: 8px;
-            background: #0d1117;
-        }
-        .device.bridge { border-color: #2ea043; background: #052e16; }
-        .device.offline { opacity: 0.85; }
-        .badge {
-            display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px;
-            font-weight: 600; margin-left: 8px;
-        }
-        .badge-online { background: #2ea043; color: white; }
-        .badge-offline { background: #6e7681; color: white; }
-        .packet-id {
-            font-family: 'Consolas', 'Monaco', monospace; font-size: 11px;
-            background: #21262d; padding: 2px 6px; border-radius: 3px; margin: 2px;
-            display: inline-block;
-        }
-        button {
-            background: #238636; color: white; border: none; padding: 8px 16px;
-            border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 500;
-            margin: 4px;
-        }
-        button:hover { background: #2ea043; }
-        button.danger { background: #da3633; }
-        button.danger:hover { background: #f85149; }
-        button.secondary { background: #1f6feb; }
-        button.secondary:hover { background: #388bfd; }
-        input, select {
-            background: #0d1117; color: #e6edf3; border: 1px solid #30363d;
-            border-radius: 4px; padding: 6px 10px; font-size: 14px; margin: 4px;
-        }
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
-        th, td { text-align: left; padding: 8px; border-bottom: 1px solid #30363d; }
-        th { color: #8b949e; font-weight: 600; font-size: 12px; text-transform: uppercase; }
-        .status-SETTLED { color: #56d364; font-weight: 600; }
-        .status-REJECTED { color: #f85149; font-weight: 600; }
-        .status-DUPLICATE_DROPPED { color: #d29922; font-weight: 600; }
-        .status-INVALID { color: #f85149; font-weight: 600; }
-        #log {
-            background: #010409; color: #7ee787; padding: 12px; border-radius: 6px;
-            font-family: 'Consolas', 'Monaco', monospace; font-size: 12px;
-            max-height: 220px; overflow-y: auto; white-space: pre-wrap;
-            border: 1px solid #30363d;
-        }
-        .controls { background: #161b22; padding: 16px; border-radius: 8px;
-                    border: 1px solid #30363d; margin-bottom: 16px; }
-        .step-num {
-            display: inline-block; background: #58a6ff; color: white;
-            border-radius: 50%; width: 24px; height: 24px; text-align: center;
-            line-height: 24px; font-weight: 600; margin-right: 8px;
-        }
-        .balance { font-family: 'Consolas', monospace; color: #56d364; font-weight: 600; }
-        .small { font-size: 12px; color: #8b949e; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouPi — Offline UPI Mesh Payment System</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
 </head>
 <body>
-<div class="container">
-    <h1>📡 UPI Offline Mesh — Live Demo</h1>
-    <p class="small">
-        Send money in a basement with zero internet. Encrypted packets gossip from phone to phone
-        until one with 4G reaches the backend.
-    </p>
 
-    <div class="controls">
-        <h3 style="margin-top:0">🎬 Demo Flow</h3>
+<div class="app-container">
 
-        <div>
-            <span class="step-num">1</span><strong>Compose payment</strong> (simulates sender phone)
-            <br>
-            <select id="senderVpa">
-                <option>alice@demo</option>
-                <option>bob@demo</option>
-                <option>carol@demo</option>
-            </select>
-            →
-            <select id="receiverVpa">
-                <option>bob@demo</option>
-                <option>carol@demo</option>
-                <option>alice@demo</option>
-                <option>dave@demo</option>
-            </select>
-            ₹<input type="number" id="amount" value="500" style="width: 100px">
-            PIN <input type="text" id="pin" value="1234" style="width: 80px" maxlength="4">
-            <button onclick="sendPacket()">📤 Inject into Mesh</button>
+    <!-- ====================================================================
+         PERSISTENT LEFT SIDEBAR
+         ==================================================================== -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                </svg>
+            </div>
+            <div class="logo-text">
+                <h1>YouPi</h1>
+                <span>Offline. Together.</span>
+            </div>
         </div>
 
-        <div style="margin-top: 16px">
-            <span class="step-num">2</span><strong>Gossip</strong> — packets hop device-to-device
-            <button class="secondary" onclick="gossip()">🔄 Run Gossip Round</button>
+        <nav class="sidebar-nav">
+            <a class="nav-link active" data-page="dashboard">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                <span>Dashboard</span>
+            </a>
+            <a class="nav-link" data-page="send-payment">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                <span>Send Payment</span>
+            </a>
+            <a class="nav-link" data-page="receive-payment">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4M16 16l-4 4-4-4"/></svg>
+                <span>Receive Payment</span>
+            </a>
+            <a class="nav-link" data-page="mesh-devices">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
+                <span>Mesh Devices</span>
+            </a>
+            <a class="nav-link" data-page="account-balances">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span>Account Balances</span>
+            </a>
+            <a class="nav-link" data-page="transaction-ledger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span>Transaction Ledger</span>
+            </a>
+            <a class="nav-link" data-page="log-details">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span>Log Details</span>
+            </a>
+            <a class="nav-link" data-page="settings">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="mesh-status-card">
+                <div class="mesh-status-header">
+                    <span class="pulse-dot"></span>
+                    <strong>Mesh Network Active</strong>
+                </div>
+                <span class="mesh-status-sub" id="sidebar-device-count">3 devices nearby</span>
+                
+                <div style="font-size: 10.5px; color: #64748b; margin-bottom: 4px; line-height: 1.3;">
+                    Payments keep moving, even without internet.
+                </div>
+
+                <div class="mesh-illustration-mini">
+                    <div class="device-glyph"></div>
+                    <div class="mesh-wave">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="device-glyph"></div>
+                </div>
+            </div>
+            <span class="version-tag">YouPi v1.0</span>
         </div>
+    </aside>
 
-        <div style="margin-top: 16px">
-            <span class="step-num">3</span><strong>Bridge node walks outside, hits 4G</strong>
-            <button class="secondary" onclick="flushBridges()">📡 Bridges Upload to Backend</button>
-            <span class="small">(parallel — exercises idempotency)</span>
-        </div>
+    <!-- ====================================================================
+         MAIN CONTENT WRAPPER
+         ==================================================================== -->
+    <div class="main-wrapper">
 
-        <div style="margin-top: 16px">
-            <button class="danger" onclick="resetMesh()">🗑 Reset Mesh + Cache</button>
-        </div>
-    </div>
+        <!-- TOP HEADER NAVBAR -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    <input type="text" id="global-search" placeholder="Search devices, transactions, or VPAs...">
+                    <span class="search-shortcut">/</span>
+                </div>
+            </div>
 
-    <div class="grid grid-2">
-        <div class="card">
-            <h2>📱 Mesh Devices</h2>
-            <div id="devices"></div>
-        </div>
+            <div class="header-right">
+                <div class="header-badge-status" id="header-mesh-status">
+                    <span class="pulse-dot"></span>
+                    <span>Mesh Network Active</span>
+                    <span style="opacity: 0.7; font-weight: 500;">(3 devices nearby)</span>
+                </div>
 
-        <div class="card">
-            <h2>🏦 Account Balances</h2>
-            <table id="accounts-table">
-                <thead><tr><th>VPA</th><th>Holder</th><th>Balance</th></tr></thead>
-                <tbody></tbody>
-            </table>
-            <p class="small" id="cacheInfo"></p>
-        </div>
-    </div>
+                <div class="header-actions">
+                    <button class="btn-header-action" onclick="handleGossip()" title="Trigger a hop of packet gossip across all nearby phones">
+                        <span>🔄</span> Gossip
+                    </button>
+                    <button class="btn-header-action" onclick="handleFlushBridges()" style="color: #15803d; border-color: #bbf7d0; background: #f0fdf4;" title="Simulate 4G bridge upload">
+                        <span>🛰</span> Flush 4G
+                    </button>
+                </div>
 
-    <div class="card" style="margin-top: 16px">
-        <h2>📜 Transaction Ledger</h2>
-        <table id="tx-table">
-            <thead><tr>
-                <th>ID</th><th>From</th><th>To</th><th>Amount</th>
-                <th>Status</th><th>Bridge</th><th>Hops</th><th>Settled</th>
-            </tr></thead>
-            <tbody></tbody>
-        </table>
-    </div>
+                <button class="icon-button" title="Notifications">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                    <span class="notification-dot"></span>
+                </button>
 
-    <div class="card" style="margin-top: 16px">
-        <h2>🪵 Activity Log</h2>
-        <div id="log"></div>
+                <div class="user-profile">
+                    <div class="avatar">S</div>
+                    <span class="user-name">Sanskar</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN BODY CONTAINER -->
+        <main class="content-body">
+
+            <!-- ============================================================
+                 VIEW 1: DASHBOARD (HOME)
+                 ============================================================ -->
+            <section id="page-dashboard" class="page-view active">
+                
+                <!-- Top Grid: Welcome Banner + 3 Stat Cards -->
+                <div class="dashboard-top-grid">
+                    <div class="welcome-banner">
+                        <div class="welcome-banner-content">
+                            <h2>Payments Keep Moving Together.</h2>
+                            <p>Send and receive payments even without internet, using nearby devices.</p>
+                            <div class="welcome-feature-tags">
+                                <span class="welcome-feature-tag">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.828m2.829 2.828L3 3m15.364 2.636L3 21m5.636-8.364a5 5 0 017.072 0m-7.072 0l-2.829-2.828"/></svg>
+                                    No Internet Needed
+                                </span>
+                                <span class="welcome-feature-tag">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                    Peer-to-Peer
+                                </span>
+                                <span class="welcome-feature-tag">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                                    Secure & Reliable
+                                </span>
+                            </div>
+                        </div>
+                        <div class="welcome-banner-visual">
+                            <img src="/images/mesh-hero.jpg" alt="Offline UPI Mesh Payment Flow" class="hero-mesh-img">
+                        </div>
+                    </div>
+
+                    <!-- Stat 1: Nearby Devices -->
+                    <div class="stat-card" onclick="navigateTo('mesh-devices')">
+                        <div>
+                            <div class="stat-icon devices">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                            </div>
+                            <div class="stat-value" id="stat-nearby-devices">3</div>
+                            <div class="stat-label">Nearby Devices</div>
+                        </div>
+                        <span class="stat-link" data-page="mesh-devices">
+                            View Devices
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </span>
+                    </div>
+
+                    <!-- Stat 2: Total Hops -->
+                    <div class="stat-card" onclick="navigateTo('mesh-devices')">
+                        <div>
+                            <div class="stat-icon hops">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            </div>
+                            <div class="stat-value" id="stat-total-hops">4</div>
+                            <div class="stat-label">Total Hops / Buffered</div>
+                        </div>
+                        <span class="stat-link" data-page="mesh-devices">
+                            Live Mesh
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </span>
+                    </div>
+
+                    <!-- Stat 3: Avg Delivery Time -->
+                    <div class="stat-card" onclick="navigateTo('log-details')">
+                        <div>
+                            <div class="stat-icon time">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            </div>
+                            <div class="stat-value">~12s</div>
+                            <div class="stat-label">Avg. Delivery Time</div>
+                        </div>
+                        <span class="stat-link" data-page="log-details">
+                            View Logs
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Main 2-Column Grid: Send Payment vs Right Previews -->
+                <div class="dashboard-main-grid">
+                    
+                    <!-- Left: Send Payment Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title-group">
+                                <div class="card-header-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="card-title">Send Payment</h3>
+                                    <p class="card-subtitle">Transfer money using nearby devices</p>
+                                </div>
+                            </div>
+                            <span class="payment-card-badge">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                Offline Mode
+                            </span>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- FROM -->
+                            <div class="form-group">
+                                <label class="form-label">From (Sender)</label>
+                                <div class="custom-select-wrapper">
+                                    <div class="select-avatar-badge">A</div>
+                                    <select class="form-select" id="senderVpa"></select>
+                                    <svg class="select-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
+                            </div>
+
+                            <!-- TO -->
+                            <div class="form-group">
+                                <label class="form-label">To (Receiver)</label>
+                                <div class="custom-select-wrapper">
+                                    <div class="select-avatar-badge receiver">B</div>
+                                    <select class="form-select" id="receiverVpa"></select>
+                                    <svg class="select-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
+                            </div>
+
+                            <!-- AMOUNT -->
+                            <div class="form-group">
+                                <label class="form-label">Amount</label>
+                                <div class="amount-input-wrapper">
+                                    <span class="amount-currency">₹</span>
+                                    <input type="number" id="amount" class="amount-input" value="500" min="1" step="1">
+                                </div>
+                                <div class="quick-amount-chips">
+                                    <button class="chip-btn" data-val="100">₹100</button>
+                                    <button class="chip-btn" data-val="200">₹200</button>
+                                    <button class="chip-btn active" data-val="500">₹500</button>
+                                    <button class="chip-btn" data-val="1000">₹1,000</button>
+                                    <button class="chip-btn" data-val="2000">₹2,000</button>
+                                </div>
+                            </div>
+
+                            <!-- PIN -->
+                            <div class="form-group">
+                                <label class="form-label">UPI PIN</label>
+                                <div class="pin-input-wrapper">
+                                    <svg class="pin-icon-left" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke-width="2"/></svg>
+                                    <input type="password" id="pin" class="pin-input" value="1234" maxlength="4">
+                                    <button type="button" class="pin-toggle-btn" id="pin-toggle-btn" title="Toggle PIN visibility">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- PRIMARY BUTTON -->
+                            <button class="btn-primary-inject" id="btn-inject" onclick="handleSendPayment(false)">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                                <span>Inject into Mesh</span>
+                            </button>
+
+                            <p class="payment-footer-note">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                                Your payment will be split, encrypted and sent via nearby devices.
+                            </p>
+
+                            <!-- SIMULATION QUICK CONTROLS -->
+                            <div class="sim-controls-bar">
+                                <button class="btn-sim-action" onclick="handleGossip()" title="Gossip packet across mesh">
+                                    <span>🔄</span> Gossip Round
+                                </button>
+                                <button class="btn-sim-action flush" onclick="handleFlushBridges()" title="Upload to backend via 4G bridge">
+                                    <span>🛰</span> Upload via 4G
+                                </button>
+                                <button class="btn-sim-action reset" onclick="handleResetMesh()" title="Reset Mesh & Cache">
+                                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Mesh Devices & Account Balances -->
+                    <div style="display: flex; flex-direction: column; gap: 24px;">
+                        
+                        <!-- Mesh Devices Preview Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title-group">
+                                    <div class="card-header-icon">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"/></svg>
+                                    </div>
+                                    <h3 class="card-title">Mesh Devices</h3>
+                                </div>
+                                <span class="card-action-link" data-page="mesh-devices">
+                                    View All
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </span>
+                            </div>
+                            <div class="card-body" style="padding: 16px 20px;">
+                                <div class="devices-list" id="dashboard-devices-preview"></div>
+                            </div>
+                        </div>
+
+                        <!-- Account Balances Preview Card -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title-group">
+                                    <div class="card-header-icon green">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                    </div>
+                                    <h3 class="card-title">Account Balances</h3>
+                                </div>
+                                <span class="card-action-link" data-page="account-balances">
+                                    View All
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                                </span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="data-table" id="dashboard-accounts-table">
+                                    <thead>
+                                        <tr>
+                                            <th>VPA</th>
+                                            <th>Holder</th>
+                                            <th>Balance</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                            <div class="table-footer-info">
+                                <span id="dashboard-cache-info">Idempotency cache size: 0</span>
+                                <span style="font-weight: 600; color: #16a34a;">● Live Settlement Ready</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Transaction Ledger Preview Card -->
+                <div class="card" style="margin-bottom: 24px;">
+                    <div class="card-header">
+                        <div class="card-title-group">
+                            <div class="card-header-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            </div>
+                            <h3 class="card-title">Transaction Ledger</h3>
+                        </div>
+                        <span class="card-action-link" data-page="transaction-ledger">
+                            View All
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                        </span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="data-table" id="dashboard-tx-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Bridge</th>
+                                    <th style="text-align: center;">Hops</th>
+                                    <th>Settled</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Activity Log Terminal Preview -->
+                <div class="terminal-card">
+                    <div class="terminal-header">
+                        <div class="terminal-title-group">
+                            <div class="terminal-dots">
+                                <span class="dot-red"></span>
+                                <span class="dot-yellow"></span>
+                                <span class="dot-green"></span>
+                            </div>
+                            <span class="terminal-title">&gt;_ Activity Log</span>
+                        </div>
+                        <div class="terminal-actions">
+                            <button class="btn-terminal" onclick="handleClearLogs()">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                Clear Logs
+                            </button>
+                            <span class="card-action-link" style="color: #60a5fa; font-size: 12px; margin-left: 8px;" data-page="log-details">
+                                Full Console →
+                            </span>
+                        </div>
+                    </div>
+                    <div class="terminal-body" id="dashboard-terminal-logs"></div>
+                </div>
+
+            </section>
+
+            <!-- ============================================================
+                 VIEW 2: SEND PAYMENT (DEDICATED PAGE)
+                 ============================================================ -->
+            <section id="page-send-payment" class="page-view">
+                <div class="page-header">
+                    <div>
+                        <h2>Send Offline Payment</h2>
+                        <p>Inject encrypted payment packets into the peer-to-peer Bluetooth mesh.</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-main-grid">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label class="form-label">From (Sender)</label>
+                                <div class="custom-select-wrapper">
+                                    <div class="select-avatar-badge">A</div>
+                                    <select class="form-select" id="sendPage-senderVpa"></select>
+                                    <svg class="select-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">To (Receiver)</label>
+                                <div class="custom-select-wrapper">
+                                    <div class="select-avatar-badge receiver">B</div>
+                                    <select class="form-select" id="sendPage-receiverVpa"></select>
+                                    <svg class="select-arrow" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Amount (INR)</label>
+                                <div class="amount-input-wrapper">
+                                    <span class="amount-currency">₹</span>
+                                    <input type="number" id="sendPage-amount" class="amount-input" value="500">
+                                </div>
+                                <div class="quick-amount-chips" id="sendPage-chips">
+                                    <button class="chip-btn" data-val="100">₹100</button>
+                                    <button class="chip-btn" data-val="200">₹200</button>
+                                    <button class="chip-btn active" data-val="500">₹500</button>
+                                    <button class="chip-btn" data-val="1000">₹1,000</button>
+                                    <button class="chip-btn" data-val="2000">₹2,000</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">UPI PIN</label>
+                                <div class="pin-input-wrapper">
+                                    <svg class="pin-icon-left" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="11" width="18" height="11" rx="2" ry="2" stroke-width="2"/><path d="M7 11V7a5 5 0 0110 0v4" stroke-width="2"/></svg>
+                                    <input type="password" id="sendPage-pin" class="pin-input" value="1234" maxlength="4">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Packet TTL (Hops before drop)</label>
+                                <input type="number" id="sendPage-ttl" class="form-select" value="5" min="1" max="10" style="padding-left: 16px;">
+                            </div>
+
+                            <button class="btn-primary-inject" id="sendPage-btn-inject" onclick="handleSendPayment(true)">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                                <span>Inject into Mesh</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Side Explanatory Card -->
+                    <div class="card" style="background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);">
+                        <div class="card-header">
+                            <h3 class="card-title">🔐 Cryptographic Hybrid Encryption</h3>
+                        </div>
+                        <div class="card-body" style="font-size: 13.5px; line-height: 1.6; color: var(--text-secondary);">
+                            <p style="margin-bottom: 12px;">
+                                <strong>How YouPi Protects Your Payment:</strong>
+                            </p>
+                            <ul style="padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+                                <li><strong>Zero plaintext exposure:</strong> Intermediate mesh phones only see ciphertext and cannot tamper with amounts or VPAs.</li>
+                                <li><strong>RSA-2048 / OAEP-SHA256:</strong> The symmetric AES-256 session key is sealed using the banking gateway's public key.</li>
+                                <li><strong>AES-GCM Authenticated Cipher:</strong> Prevents bit-flipping attacks during mesh packet propagation.</li>
+                                <li><strong>SHA-256 Idempotency:</strong> Duplicate copies circulating in the mesh are automatically de-duplicated at the bank server.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 VIEW 3: RECEIVE PAYMENT (QR & SOUNDBOX SIMULATOR)
+                 ============================================================ -->
+            <section id="page-receive-payment" class="page-view">
+                <div class="page-header">
+                    <div>
+                        <h2>Receive Payment</h2>
+                        <p>Generate dynamic UPI QR codes and soundbox listeners for offline mesh reception.</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-main-grid">
+                    <div class="card">
+                        <div class="card-body" style="text-align: center;">
+                            <div class="form-group" style="text-align: left;">
+                                <label class="form-label">Receiving Account</label>
+                                <select class="form-select" id="receive-account-select" onchange="updateReceiveQR()" style="padding-left: 16px;"></select>
+                            </div>
+
+                            <div class="form-group" style="text-align: left;">
+                                <label class="form-label">Requested Amount (Optional)</label>
+                                <input type="number" id="receive-amount-input" class="form-select" value="500" oninput="updateReceiveQR()" style="padding-left: 16px;">
+                            </div>
+
+                            <div style="margin: 24px 0;" id="receive-qr-code"></div>
+
+                            <div style="background: var(--bg-input); padding: 12px; border-radius: 8px; font-family: var(--font-mono); font-size: 11px; word-break: break-all; color: var(--text-muted);" id="receive-upi-uri">
+                                upi://pay?pa=alice@demo&pn=YouPi%20User&am=500&cu=INR&mode=04
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🔊 Virtual Soundbox & Settlement Status</h3>
+                        </div>
+                        <div class="card-body">
+                            <div style="background: #0f172a; border-radius: 12px; padding: 24px; color: white; text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 36px; margin-bottom: 8px;">📢</div>
+                                <h4 style="font-size: 16px; margin-bottom: 6px;">YouPi Merchant Soundbox</h4>
+                                <span style="background: #10b981; color: white; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700;">ONLINE (MESH LISTENER)</span>
+                            </div>
+                            <p style="font-size: 13px; color: var(--text-muted); line-height: 1.5;">
+                                When a customer sends a payment via nearby devices, the transaction will automatically settle once any nearby bridge reaches internet connectivity.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 VIEW 4: MESH DEVICES
+                 ============================================================ -->
+            <section id="page-mesh-devices" class="page-view">
+                <div class="page-header">
+                    <div>
+                        <h2>Mesh Network Topology</h2>
+                        <p>Real-time telemetry and packet buffers of simulated Bluetooth mesh phones.</p>
+                    </div>
+                    <button class="btn-primary-inject" style="width: auto; padding: 0 20px; height: 42px;" onclick="handleGossip()">
+                        <span>🔄 Run Gossip Round</span>
+                    </button>
+                </div>
+
+                <div class="devices-full-grid" id="full-devices-grid"></div>
+            </section>
+
+            <!-- ============================================================
+                 VIEW 5: ACCOUNT BALANCES
+                 ============================================================ -->
+            <section id="page-account-balances" class="page-view">
+                <div class="page-header">
+                    <div>
+                        <h2>Account Balances & Liquidity</h2>
+                        <p>Core banking ledger records backed by in-memory H2 database with strict ACID settlement.</p>
+                    </div>
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 8px 16px; border-radius: 12px; text-align: right;">
+                        <span style="font-size: 11px; font-weight: 700; color: #1d4ed8; text-transform: uppercase;">Total Ledger Liquidity</span>
+                        <div style="font-size: 20px; font-weight: 800; color: #1e3a8a; font-family: var(--font-mono);" id="accounts-total-liquidity">₹9,000.00</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="table-responsive">
+                        <table class="data-table" id="full-accounts-table">
+                            <thead>
+                                <tr>
+                                    <th>UPI VPA</th>
+                                    <th>Account Holder</th>
+                                    <th>Balance</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer-info">
+                        <div>Idempotency Cache: <strong id="full-accounts-cache-size">0 entries</strong></div>
+                        <span>Database: H2 (Zero setup in-memory ACID store)</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 VIEW 6: TRANSACTION LEDGER
+                 ============================================================ -->
+            <section id="page-transaction-ledger" class="page-view">
+                <div class="page-header">
+                    <div>
+                        <h2>Transaction Ledger</h2>
+                        <p>Complete immutable audit trail of all settled, rejected, or de-duplicated payments.</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" style="flex-wrap: wrap; gap: 12px;">
+                        <div style="display: flex; gap: 10px; align-items: center; flex: 1; min-width: 240px;">
+                            <input type="text" id="tx-search-input" class="search-box input" placeholder="Search by VPA or ID..." style="height: 38px; padding: 0 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 13px;" oninput="renderTransactionLedgerPage()">
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <select id="tx-status-filter" class="form-select" style="height: 38px; padding: 0 30px 0 12px; font-size: 13px;" onchange="renderTransactionLedgerPage()">
+                                <option value="ALL">All Statuses</option>
+                                <option value="SETTLED">SETTLED</option>
+                                <option value="REJECTED">REJECTED</option>
+                                <option value="DUPLICATE_DROPPED">DUPLICATE</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="data-table" id="full-tx-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>From</th>
+                                    <th>To</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Bridge</th>
+                                    <th style="text-align: center;">Hops</th>
+                                    <th>Settled</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 VIEW 7: LOG DETAILS (DEVELOPER CONSOLE)
+                 ============================================================ -->
+            <section id="page-log-details" class="page-view">
+                <div class="page-header">
+                    <div>
+                        <h2>Activity Logs & Telemetry</h2>
+                        <p>Real-time mesh network, cryptographic handshake, and transaction events.</p>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-sim-action" onclick="handleExportLogs()">
+                            <span>💾</span> Export Logs
+                        </button>
+                        <button class="btn-sim-action reset" style="width: auto; padding: 0 14px;" onclick="handleClearLogs()">
+                            <span>🗑</span> Clear
+                        </button>
+                    </div>
+                </div>
+
+                <div class="log-filter-bar">
+                    <button class="log-filter-chip active" data-filter="All">All</button>
+                    <button class="log-filter-chip" data-filter="Payment">Payments</button>
+                    <button class="log-filter-chip" data-filter="Mesh">Mesh</button>
+                    <button class="log-filter-chip" data-filter="Bridge">Bridge</button>
+                    <button class="log-filter-chip" data-filter="Errors">Errors</button>
+                    <button class="log-filter-chip" data-filter="System">System</button>
+                </div>
+
+                <div class="terminal-card">
+                    <div class="terminal-header">
+                        <div class="terminal-title-group">
+                            <div class="terminal-dots">
+                                <span class="dot-red"></span>
+                                <span class="dot-yellow"></span>
+                                <span class="dot-green"></span>
+                            </div>
+                            <span class="terminal-title">youpi-daemon://mesh-stream-0</span>
+                        </div>
+                        <input type="text" id="log-search-input" placeholder="Filter log output..." style="background: #1e293b; border: 1px solid #334155; color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-family: var(--font-mono); outline: none;" oninput="renderLogDetailsPage()">
+                    </div>
+                    <div class="terminal-body full-view" id="full-terminal-logs"></div>
+                </div>
+            </section>
+
+            <!-- ============================================================
+                 VIEW 8: SETTINGS & SYSTEM INFO
+                 ============================================================ -->
+            <section id="page-settings" class="page-view">
+                <div class="page-header">
+                    <div>
+                        <h2>Settings & System Architecture</h2>
+                        <p>Inspect server RSA keys, configure gossip frequency, and diagnose cryptographic parameters.</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-main-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">🔑 Banking Gateway Server Public Key</h3>
+                        </div>
+                        <div class="card-body">
+                            <pre id="settings-server-key" style="background: var(--bg-input); padding: 14px; border-radius: 8px; font-family: var(--font-mono); font-size: 11.5px; overflow-x: auto; color: var(--text-primary); border: 1px solid var(--border);">Loading key metadata...</pre>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">⚙ Simulation Parameters</h3>
+                        </div>
+                        <div class="card-body" style="display: flex; flex-direction: column; gap: 16px;">
+                            <div>
+                                <label class="form-label">Auto-polling Interval</label>
+                                <input type="text" class="form-select" value="3000 ms (Real-time reactive)" readonly style="padding-left: 16px; background: #f1f5f9;">
+                            </div>
+                            <div>
+                                <label class="form-label">Reset Simulation State</label>
+                                <p style="font-size: 12.5px; color: var(--text-muted); margin-bottom: 8px;">Clears all held packets across all virtual phones and flushes Redis idempotency memory.</p>
+                                <button class="btn-primary-inject" style="background: #ef4444; width: auto; padding: 0 18px; height: 40px;" onclick="handleResetMesh()">
+                                    Reset Mesh & Cache
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
     </div>
 </div>
 
-<script>
-function log(msg) {
-    const el = document.getElementById('log');
-    el.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg + '\n' + el.textContent;
-}
-
-async function refresh() {
-    // Mesh state
-    const m = await fetch('/api/mesh/state').then(r => r.json());
-    const devicesDiv = document.getElementById('devices');
-    devicesDiv.innerHTML = m.devices.map(d => `
-        <div class="device ${d.hasInternet ? 'bridge' : 'offline'}">
-            <strong>${d.deviceId}</strong>
-            <span class="badge ${d.hasInternet ? 'badge-online' : 'badge-offline'}">
-                ${d.hasInternet ? '🌐 4G' : '🚫 OFFLINE'}
-            </span>
-            <span class="small">holding ${d.packetCount} packet(s)</span>
-            <div>${d.packetIds.map(id => `<span class="packet-id">${id}</span>`).join('')}</div>
+<!-- ========================================================================
+     MODAL: DEVICE DETAIL DRAWER
+     ======================================================================== -->
+<div class="modal-backdrop" id="device-modal" onclick="if(event.target === this) closeDeviceModal()">
+    <div class="modal-dialog">
+        <div class="modal-header">
+            <h3 class="modal-title">Device Telemetry</h3>
+            <button class="modal-close-btn" onclick="closeDeviceModal()">&times;</button>
         </div>
-    `).join('');
-    document.getElementById('cacheInfo').textContent =
-        `Idempotency cache size: ${m.idempotencyCacheSize}`;
+        <div class="modal-body" id="device-modal-content"></div>
+    </div>
+</div>
 
-    // Accounts
-    const accs = await fetch('/api/accounts').then(r => r.json());
-    document.querySelector('#accounts-table tbody').innerHTML = accs.map(a => `
-        <tr><td>${a.vpa}</td><td>${a.holderName}</td>
-            <td class="balance">₹${parseFloat(a.balance).toFixed(2)}</td></tr>
-    `).join('');
+<!-- Scripts -->
+<script src="/js/api.js"></script>
+<script src="/js/state.js"></script>
+<script src="/js/app.js"></script>
 
-    // Transactions
-    const txs = await fetch('/api/transactions').then(r => r.json());
-    document.querySelector('#tx-table tbody').innerHTML = txs.map(t => `
-        <tr>
-            <td>${t.id}</td><td>${t.senderVpa}</td><td>${t.receiverVpa}</td>
-            <td class="balance">₹${parseFloat(t.amount).toFixed(2)}</td>
-            <td class="status-${t.status}">${t.status}</td>
-            <td>${t.bridgeNodeId}</td><td>${t.hopCount}</td>
-            <td class="small">${new Date(t.settledAt).toLocaleTimeString()}</td>
-        </tr>
-    `).join('');
-}
-
-async function sendPacket() {
-    const body = {
-        senderVpa: document.getElementById('senderVpa').value,
-        receiverVpa: document.getElementById('receiverVpa').value,
-        amount: parseFloat(document.getElementById('amount').value),
-        pin: document.getElementById('pin').value,
-        ttl: 5,
-        startDevice: 'phone-alice'
-    };
-    const r = await fetch('/api/demo/send', {
-        method: 'POST', headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(body)
-    }).then(r => r.json());
-    log(`📤 Packet ${r.packetId.substring(0,8)} encrypted & injected at ${r.injectedAt} (TTL ${r.ttl})`);
-    log(`   ciphertext (truncated): ${r.ciphertextPreview}`);
-    refresh();
-}
-
-async function gossip() {
-    const r = await fetch('/api/mesh/gossip', {method: 'POST'}).then(r => r.json());
-    log(`🔄 Gossip: ${r.transfers} transfer(s) — ${JSON.stringify(r.deviceCounts)}`);
-    refresh();
-}
-
-async function flushBridges() {
-    const r = await fetch('/api/mesh/flush', {method: 'POST'}).then(r => r.json());
-    log(`📡 ${r.uploadsAttempted} bridge upload(s):`);
-    r.results.forEach(res => {
-        log(`   ${res.bridgeNode} packet ${res.packetId} → ${res.outcome}` +
-            (res.reason ? ` (${res.reason})` : ''));
-    });
-    refresh();
-}
-
-async function resetMesh() {
-    await fetch('/api/mesh/reset', {method: 'POST'});
-    log('🗑 mesh + idempotency cache cleared');
-    refresh();
-}
-
-refresh();
-setInterval(refresh, 3000);
-</script>
 </body>
 </html>

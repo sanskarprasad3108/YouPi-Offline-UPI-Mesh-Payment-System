@@ -50,7 +50,7 @@ if not exist %WRAPPER_JAR% (
     )
 )
 
-%MAVEN_JAVA_EXE% ^
+call "%MAVEN_JAVA_EXE%" ^
   %JVM_CONFIG_MAVEN_PROPS% ^
   %MAVEN_OPTS% ^
   -classpath %WRAPPER_JAR% ^
