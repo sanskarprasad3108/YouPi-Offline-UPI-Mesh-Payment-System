@@ -1,10 +1,12 @@
 # Multi-stage build for lightweight, fast deployment
-# build: v2 - includes /health endpoint for UptimeRobot keep-alive
+# build: v3 - cache-bust forced recompile of all sources
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
+# Copy everything together so any source change invalidates the compile layer
 COPY pom.xml .
 COPY src ./src
-RUN mvn clean package -DskipTests
+# Force a completely clean build — no incremental caching
+RUN mvn clean package -DskipTests --no-transfer-progress
 
 # Run stage
 FROM eclipse-temurin:17-jre-jammy
