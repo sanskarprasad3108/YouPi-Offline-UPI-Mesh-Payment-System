@@ -462,6 +462,18 @@ async function renderSettingsPage() {
    EVENT LISTENERS & FORM HANDLERS
    ========================================================================== */
 function setupEventListeners() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    if (mobileMenuButton) {
+        mobileMenuButton.addEventListener('click', () => {
+            const isOpen = document.body.classList.toggle('mobile-nav-open');
+            mobileMenuButton.setAttribute('aria-expanded', String(isOpen));
+        });
+    }
+
+    document.querySelectorAll('.sidebar-nav .nav-link').forEach(link => {
+        link.addEventListener('click', () => document.body.classList.remove('mobile-nav-open'));
+    });
+
     // Quick Amount Chips on Dashboard
     document.querySelectorAll('.quick-amount-chips .chip-btn').forEach(btn => {
         btn.addEventListener('click', () => {

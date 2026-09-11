@@ -1,297 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>YouPi — Offline UPI Mesh Payment System</title>
-    <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/5ac3fe7c6abd2f62067f266d89671492?family=HelveticaNowDisplay-Medium" />
-    <link rel="stylesheet" href="https://db.onlinewebfonts.com/c/1aa3377e489837a26d019bba501e779d?family=HelveticaNowDisplayW01-Rg" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232563eb'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouPi | Payments that keep moving</title>
+    <link rel="stylesheet" href="/css/styles.css">
     <style>
-        :root {
-            --font-heading: 'HelveticaNowDisplay-Medium', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --font-body: 'HelveticaNowDisplayW01-Rg', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            font-synthesis: none;
-            text-rendering: optimizeLegibility;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            background-color: #000;
-            color: #000;
-            font-family: var(--font-body);
-            overflow: hidden;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .landing-main {
-            position: relative;
-            min-height: 100vh;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #000;
-        }
-
-        .video-bg {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: 70% center;
-            pointer-events: none;
-        }
-
-        .video-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background-color: rgba(255, 255, 255, 0.15);
-            pointer-events: none;
-        }
-
-        .landing-section {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            height: 100vh;
-            width: 100%;
-            align-items: flex-end;
-            overflow: hidden;
-            padding: 0 20px 48px;
-        }
-
-        @media (min-width: 768px) {
-            .landing-section {
-                align-items: center;
-                padding: 0 40px;
-            }
-        }
-
-        .aria-intro {
-            position: relative;
-            z-index: 10;
-            max-width: 580px;
-        }
-
-        .aria-intro p {
-            pointer-events: none;
-            user-select: none;
-            margin-bottom: 24px;
-            font-size: clamp(18px, 4vw, 26px);
-            line-height: 1.3;
-            color: #000;
-            filter: blur(4px);
-            font-weight: 500;
-        }
-
-        .start-btn {
-            position: absolute;
-            left: 55%;
-            top: 63%;
-            z-index: 10;
-            border-radius: 9999px;
-            border: 1px solid #ffffff;
-            background-color: #000000;
-            padding: 12px 32px;
-            font-size: 16px;
-            font-weight: 500;
-            font-family: var(--font-heading);
-            color: #ffffff;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 0 8px rgba(255, 255, 255, 0.95), 0 0 22px rgba(255, 255, 255, 0.65);
-            transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
-            outline: none;
-        }
-
-        @media (min-width: 640px) {
-            .start-btn {
-                left: 59%;
-                top: 62%;
-                padding: 16px 40px;
-                font-size: 18px;
-            }
-        }
-
-        .start-btn:hover {
-            background-color: #ffffff;
-            color: #000000;
-            box-shadow: 0 0 14px rgba(255, 255, 255, 1), 0 0 32px rgba(255, 255, 255, 0.9);
-            transform: scale(1.04);
-        }
-
-        .start-btn:active {
-            transform: scale(0.98);
-        }
-
-        .bottom-card {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            z-index: 10;
-            width: 37%;
-            min-width: 320px;
-            max-width: 620px;
-            transform: translateY(36px);
-            border-top-left-radius: 16px;
-            border-bottom-left-radius: 16px;
-            background: transparent;
-            padding: 20px 28px 32px;
-            color: #ffffff;
-            box-shadow: 0 0 12px rgba(220, 245, 255, 0.85), 0 8px 30px rgba(70, 170, 220, 0.4);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-right: none;
-        }
-
-        .bottom-card h1 {
-            font-size: clamp(22px, 3vw, 38px);
-            font-weight: 700;
-            line-height: 1.15;
-            font-family: var(--font-heading);
-            letter-spacing: -0.02em;
-        }
-
-        .bottom-card p {
-            margin-top: 6px;
-            font-size: clamp(12px, 1.5vw, 18px);
-            font-weight: 300;
-            line-height: 1.35;
-            opacity: 0.95;
-        }
-
-        @media (max-width: 640px) {
-            .bottom-card {
-                width: 90%;
-                min-width: unset;
-                transform: translateY(16px);
-                padding: 16px 20px 24px;
-            }
-            .start-btn {
-                left: 50%;
-                transform: translateX(-50%);
-                top: 55%;
-            }
-            .start-btn:hover {
-                transform: translateX(-50%) scale(1.04);
-            }
-            .start-btn:active {
-                transform: translateX(-50%) scale(0.98);
-            }
-        }
+        :root { --ink: #172b4d; --teal: #1f6f78; --mint: #eaf4f3; --paper: #f7faf9; --line: #d8e5e4; }
+        .landing-page { min-height: 100vh; background: var(--paper); color: var(--ink); font-family: 'Plus Jakarta Sans', sans-serif; }
+        .landing-nav { height: 76px; display: flex; align-items: center; justify-content: space-between; max-width: 1180px; margin: 0 auto; padding: 0 28px; border-bottom: 1px solid var(--line); }
+        .landing-brand { display: flex; align-items: center; gap: 11px; color: var(--ink); text-decoration: none; font-size: 18px; font-weight: 800; letter-spacing: -0.03em; }
+        .landing-brand-mark { width: 32px; height: 32px; display: grid; place-items: center; background: var(--teal); color: #fff; border-radius: 6px; font-size: 13px; letter-spacing: 0; }
+        .landing-nav-note { color: #6d7e87; font-size: 12px; font-weight: 600; }
+        .landing-content { max-width: 1180px; margin: 0 auto; padding: 86px 28px 70px; }
+        .landing-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr); gap: 92px; align-items: center; }
+        .landing-kicker { display: inline-flex; align-items: center; gap: 8px; color: var(--teal); font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; }
+        .landing-kicker::before { content: ''; width: 22px; height: 2px; background: var(--teal); }
+        .landing-copy h1 { max-width: 610px; margin-top: 22px; font-size: clamp(42px, 5.4vw, 74px); line-height: 1.02; letter-spacing: -0.065em; font-weight: 700; }
+        .landing-copy h1 span { color: var(--teal); }
+        .landing-copy p { max-width: 520px; margin-top: 24px; color: #5b6d78; font-size: 17px; line-height: 1.7; }
+        .landing-actions { display: flex; align-items: center; gap: 18px; margin-top: 34px; }
+        .landing-primary, .landing-secondary { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border-radius: 6px; font-size: 13px; font-weight: 700; text-decoration: none; transition: transform 180ms ease, background 180ms ease, border-color 180ms ease; }
+        .landing-primary { background: var(--teal); color: white; box-shadow: 0 6px 16px rgba(31, 111, 120, 0.2); }
+        .landing-primary:hover { background: #185a62; transform: translateY(-1px); }
+        .landing-secondary { color: var(--ink); border: 1px solid var(--line); background: transparent; }
+        .landing-secondary:hover { border-color: var(--teal); background: #fff; }
+        .landing-proof { display: flex; gap: 26px; margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--line); }
+        .landing-proof strong { display: block; font-size: 18px; letter-spacing: -0.03em; }
+        .landing-proof span { display: block; margin-top: 4px; color: #778892; font-size: 11px; font-weight: 600; }
+        .landing-product-panel { position: relative; padding: 18px; background: #fff; border: 1px solid var(--line); box-shadow: 0 20px 42px rgba(23, 43, 77, 0.09); }
+        .landing-product-panel img { display: block; width: 100%; aspect-ratio: 1.25; object-fit: cover; object-position: center; filter: saturate(0.78) contrast(0.96); }
+        .landing-panel-caption { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 2px 2px; }
+        .landing-panel-caption strong { font-size: 13px; }
+        .landing-panel-caption span { color: #71818b; font-size: 11px; text-align: right; }
+        .landing-status { position: absolute; right: -20px; bottom: 72px; display: flex; align-items: center; gap: 10px; padding: 12px 15px; background: var(--ink); color: #fff; font-size: 11px; font-weight: 700; box-shadow: 0 12px 24px rgba(23, 43, 77, 0.16); }
+        .landing-status i { width: 7px; height: 7px; border-radius: 50%; background: #8bd1b5; }
+        @media (max-width: 800px) { .landing-nav { padding: 0 20px; } .landing-content { padding: 54px 20px 48px; } .landing-grid { grid-template-columns: 1fr; gap: 54px; } .landing-copy h1 { font-size: clamp(42px, 12vw, 62px); } .landing-product-panel { max-width: 580px; } .landing-status { right: 12px; bottom: 72px; } }
+        @media (max-width: 480px) { .landing-nav-note { display: none; } .landing-copy p { font-size: 15px; } .landing-actions { align-items: stretch; flex-direction: column; gap: 10px; } .landing-proof { gap: 18px; justify-content: space-between; } .landing-status { position: static; margin-top: 12px; justify-content: center; } }
     </style>
 </head>
-<body>
-    <main class="landing-main">
-        <!-- Background interactive video -->
-        <video id="robot-video" class="video-bg" muted playsinline preload="auto" aria-hidden="true">
-            <source src="/videos/robot-aria.mp4" type="video/mp4">
-        </video>
-
-        <div class="video-overlay" aria-hidden="true"></div>
-
-        <section id="top" class="landing-section">
-            <div class="aria-intro">
-                <p>Hey there, meet A.R.I.A,<br />Mainframe's Adaptive Response Interface Agent</p>
-            </div>
-
-            <!-- Start button connecting directly to the real existing dashboard -->
-            <a href="/dashboard" id="start-btn" class="start-btn" role="button">Start</a>
-
-            <!-- Bottom right frosted glass card -->
-            <div class="bottom-card">
-                <h1>Pay Beyond the Internet</h1>
-                <p>Secure payments through nearby devices.</p>
-            </div>
-        </section>
+<body class="landing-page">
+    <nav class="landing-nav" aria-label="Main navigation">
+        <a class="landing-brand" href="/"><span class="landing-brand-mark">YP</span><span>YouPi</span></a>
+        <span class="landing-nav-note">Offline payment operations</span>
+    </nav>
+    <main class="landing-content">
+        <div class="landing-grid">
+            <section class="landing-copy">
+                <span class="landing-kicker">A resilient payment network</span>
+                <h1>Payments that keep <span>moving.</span></h1>
+                <p>YouPi helps people send and receive UPI payments when connectivity is limited. Nearby devices carry encrypted payment packets until a trusted bridge can settle them.</p>
+                <div class="landing-actions"><a class="landing-primary" href="/dashboard">Open operations dashboard</a><a class="landing-secondary" href="/dashboard#page-mesh-devices">View network status</a></div>
+                <div class="landing-proof" aria-label="Product capabilities"><div><strong>4G bridge</strong><span>Settlement-ready</span></div><div><strong>Encrypted</strong><span>End to end</span></div><div><strong>Live mesh</strong><span>Device telemetry</span></div></div>
+            </section>
+            <aside class="landing-product-panel" aria-label="YouPi network preview">
+                <img src="/images/mesh-hero.jpg" alt="YouPi mesh payment network">
+                <div class="landing-panel-caption"><strong>Network overview</strong><span>Nearby nodes, one shared<br>settlement path</span></div>
+                <div class="landing-status"><i></i><span>Mesh network active</span></div>
+            </aside>
+        </div>
     </main>
-
-    <script>
-        (function() {
-            const video = document.getElementById('robot-video');
-            let prevX = null;
-            let targetTime = 0;
-            let seeking = false;
-            let pendingDelta = 0;
-            let frameId = null;
-
-            if (video) {
-                video.addEventListener('loadedmetadata', function() {
-                    targetTime = video.duration / 2;
-                    try {
-                        video.currentTime = targetTime;
-                    } catch (e) {
-                        console.warn('Initial seek failed:', e);
-                    }
-                });
-
-                const seekNext = function() {
-                    seeking = false;
-                    if (video.duration && Math.abs(video.currentTime - targetTime) > 0.01) {
-                        seeking = true;
-                        video.currentTime = targetTime;
-                    }
-                };
-
-                const applyPointerDelta = function() {
-                    frameId = null;
-                    if (!video.duration) return;
-                    targetTime = Math.max(0, Math.min(video.duration, targetTime + (pendingDelta / window.innerWidth) * 0.8 * video.duration));
-                    pendingDelta = 0;
-                    if (!seeking) seekNext();
-                };
-
-                const handleMouseMove = function(event) {
-                    if (prevX === null) {
-                        prevX = event.clientX;
-                        return;
-                    }
-                    pendingDelta += event.clientX - prevX;
-                    prevX = event.clientX;
-                    if (frameId === null) {
-                        frameId = requestAnimationFrame(applyPointerDelta);
-                    }
-                };
-
-                video.addEventListener('seeked', seekNext);
-                window.addEventListener('mousemove', handleMouseMove, { passive: true });
-
-                // Touch support for mobile devices
-                let touchStartX = null;
-                window.addEventListener('touchmove', function(e) {
-                    if (e.touches.length > 0) {
-                        const touchX = e.touches[0].clientX;
-                        if (touchStartX === null) {
-                            touchStartX = touchX;
-                            return;
-                        }
-                        pendingDelta += touchX - touchStartX;
-                        touchStartX = touchX;
-                        if (frameId === null) {
-                            frameId = requestAnimationFrame(applyPointerDelta);
-                        }
-                    }
-                }, { passive: true });
-                window.addEventListener('touchend', function() {
-                    touchStartX = null;
-                });
-            }
-        })();
-    </script>
 </body>
 </html>
