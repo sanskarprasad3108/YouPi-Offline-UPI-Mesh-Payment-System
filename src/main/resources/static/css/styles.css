@@ -12,7 +12,7 @@
     /* Colors */
     --primary: #0f172a;
     --primary-light: #1e293b;
-    --sidebar-bg: #0b1324;
+    --sidebar-bg: #000000;
     --sidebar-active: #2563eb;
     --sidebar-hover: rgba(255, 255, 255, 0.06);
     --sidebar-text: #94a3b8;
@@ -1639,7 +1639,7 @@ html, body {
 :root {
     --primary: #172b4d;
     --primary-light: #243b5a;
-    --sidebar-bg: #10233f;
+    --sidebar-bg: #000000;
     --sidebar-active: #1f6f78;
     --accent: #1f6f78;
     --accent-hover: #185a62;
@@ -1667,6 +1667,7 @@ body {
 }
 
 .sidebar {
+    background-color: #000000;
     box-shadow: 8px 0 24px rgba(23, 43, 77, 0.06);
 }
 
