@@ -80,8 +80,8 @@
 html, body {
     height: 100%;
     font-family: var(--font-main);
-    background-color: var(--bg-page);
-    color: var(--text-primary);
+    background-color: #090909;
+    color: #f8fafc;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
@@ -90,7 +90,7 @@ html, body {
 .app-container {
     display: flex;
     min-height: 100vh;
-    background-color: var(--bg-page);
+    background-color: #090909;
 }
 
 /* ==========================================================================
@@ -868,13 +868,13 @@ html, body {
     width: 100%;
     height: 48px;
     padding: 0 40px 0 46px;
-    background-color: var(--bg-input);
-    border: 1px solid var(--border);
+    background-color: #121212;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-md);
     font-size: 14.5px;
     font-weight: 600;
     font-family: var(--font-main);
-    color: var(--text-primary);
+    color: #f8fafc;
     cursor: pointer;
     appearance: none;
     outline: none;
@@ -882,9 +882,9 @@ html, body {
 }
 
 .form-select:focus {
-    background-color: #ffffff;
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    background-color: #171717;
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.12);
 }
 
 .select-arrow {
@@ -915,21 +915,21 @@ html, body {
     height: 52px;
     padding-left: 42px;
     padding-right: 16px;
-    background-color: var(--bg-input);
-    border: 1px solid var(--border);
+    background-color: #121212;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-md);
     font-size: 20px;
     font-weight: 700;
     font-family: var(--font-main);
-    color: var(--text-primary);
+    color: #f8fafc;
     outline: none;
     transition: var(--transition);
 }
 
 .amount-input:focus {
-    background-color: #ffffff;
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    background-color: #171717;
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.12);
 }
 
 .quick-amount-chips {
@@ -982,21 +982,21 @@ html, body {
     width: 100%;
     height: 48px;
     padding: 0 46px 0 44px;
-    background-color: var(--bg-input);
-    border: 1px solid var(--border);
+    background-color: #121212;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-md);
     font-size: 16px;
     font-family: var(--font-mono);
     letter-spacing: 0.25em;
-    color: var(--text-primary);
+    color: #f8fafc;
     outline: none;
     transition: var(--transition);
 }
 
 .pin-input:focus {
-    background-color: #ffffff;
-    border-color: var(--border-focus);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    background-color: #171717;
+    border-color: rgba(255, 255, 255, 0.14);
+    box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.12);
 }
 
 .pin-toggle-btn {
@@ -1077,13 +1077,13 @@ html, body {
 
 .btn-sim-action {
     height: 42px;
-    background: var(--bg-hover);
-    border: 1px solid var(--border);
+    background: #121212;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-md);
     font-size: 13px;
     font-weight: 600;
     font-family: var(--font-main);
-    color: var(--text-secondary);
+    color: #e2e8f0;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1093,9 +1093,9 @@ html, body {
 }
 
 .btn-sim-action:hover {
-    background: var(--accent-light);
-    border-color: var(--accent-border);
-    color: var(--accent);
+    background: #171717;
+    border-color: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
 }
 
 .btn-sim-action.flush {
@@ -1135,16 +1135,16 @@ html, body {
     align-items: center;
     justify-content: space-between;
     padding: 12px 16px;
-    background: #ffffff;
-    border: 1px solid var(--border);
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-md);
     transition: var(--transition);
     cursor: pointer;
 }
 
 .device-item:hover {
-    border-color: var(--accent-border);
-    background: var(--bg-hover);
+    border-color: rgba(255, 255, 255, 0.14);
+    background: #171717;
 }
 
 .device-item.bridge {
@@ -1165,7 +1165,7 @@ html, body {
 .device-name {
     font-size: 14px;
     font-weight: 700;
-    color: var(--text-primary);
+    color: #f8fafc;
 }
 
 .device-tag {
@@ -1223,19 +1223,19 @@ html, body {
 
 .data-table th {
     padding: 12px 16px;
-    background-color: var(--bg-input);
-    color: var(--text-muted);
+    background-color: #111111;
+    color: #a8b2c0;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .data-table td {
     padding: 14px 16px;
-    border-bottom: 1px solid var(--border-light);
-    color: var(--text-primary);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    color: #f8fafc;
     vertical-align: middle;
 }
 
@@ -1244,7 +1244,7 @@ html, body {
 }
 
 .data-table tbody tr:hover {
-    background-color: var(--bg-hover);
+    background-color: rgba(255, 255, 255, 0.02);
 }
 
 .balance-cell {
@@ -1295,13 +1295,13 @@ html, body {
 
 .table-footer-info {
     padding: 14px 20px;
-    background: var(--bg-input);
-    border-top: 1px solid var(--border-light);
+    background: #111111;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
     display: flex;
     align-items: center;
     justify-content: space-between;
     font-size: 12px;
-    color: var(--text-muted);
+    color: #a8b2c0;
 }
 
 /* ==========================================================================
@@ -1428,13 +1428,13 @@ html, body {
 .page-header h2 {
     font-size: 24px;
     font-weight: 800;
-    color: var(--text-primary);
+    color: #f8fafc;
     letter-spacing: -0.02em;
 }
 
 .page-header p {
     font-size: 13.5px;
-    color: var(--text-muted);
+    color: #a8b2c0;
     margin-top: 4px;
 }
 
@@ -1447,8 +1447,8 @@ html, body {
 }
 
 .device-card-rich {
-    background: #ffffff;
-    border: 1px solid var(--border);
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: var(--radius-lg);
     padding: 20px;
     box-shadow: var(--shadow-sm);
@@ -1457,8 +1457,8 @@ html, body {
 
 .device-card-rich:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--accent-border);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.14);
 }
 
 .device-card-rich.is-bridge {
@@ -1507,7 +1507,7 @@ html, body {
 
 .device-meta-val {
     font-weight: 600;
-    color: var(--text-primary);
+    color: #f8fafc;
 }
 
 .held-packets-box {
